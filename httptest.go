@@ -6,25 +6,25 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"log"
 )
 
 func main() {
-	total_time := time.Duration(0)
-	num_passes := 10
+	totalTime := time.Duration(0)
+	numPasses := 10
 	var url string 
 
 	// Expects the URL on the commandline
-	num_args := len(os.Args)
-	if num_args >= 2 {
+	numArgs := len(os.Args)
+	if numArgs >= 2 {
 		url = os.Args[1]
 	} else {
-		fmt.Println("Incluye la URL en la línea de comando")
-		os.Exit(1)
+		log.Fatal("URL is needed")
 	}
 
-	if num_args == 3 {
+	if numArgs == 3 {
         	if result, err := strconv.Atoi(os.Args[2]); err == nil {
-			num_passes = result
+			numPasses = result
 		}	
 	}
 
@@ -33,22 +33,21 @@ func main() {
 	// Prime DNS
 	_, err := http.Head(url)
 	if err != nil {
-		fmt.Println("Había un problema conectando")
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	// Perform the passes, keeping track of how long each takes
-	for i := 0; i < num_passes; i++ {
+	for i := 0; i < numPasses; i++ {
 		start := time.Now()
 		_, _ = http.Head(url)
 		elapsed := time.Since(start)
 
 		fmt.Printf("Pass %d took %s\n", i, elapsed)
 
-		total_time += elapsed
+		totalTime += elapsed
 	}
 
-	average := total_time / time.Duration(num_passes)
-	fmt.Printf("Total time for %d passes = %s\n", num_passes, total_time)
+	average := totalTime / time.Duration(numPasses)
+	fmt.Printf("Total time for %d passes = %s\n", numPasses, totalTime)
 	fmt.Printf("Average time for each pass = %s\n", average)
 }
