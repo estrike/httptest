@@ -15,7 +15,7 @@ var average time.Duration
 var numPasses int = 10
 var url string
 
-func main() {
+func init() {
 	// Expects the URL on the commandline
 	numArgs := len(os.Args)
 	if numArgs >= 2 {
@@ -29,24 +29,34 @@ func main() {
 			numPasses = result
 		}	
 	}
+}
 
-	// Assigns number of passes if given on CL
+func main() {
+	// Prepare the HTTP client with URL and HEADERS
+	client := &http.Client{}
+	req, _ := http.NewRequest("HEAD", url, nil)
+	req.Host = "www.example.com"
 
 	// Prime DNS
-	_, err := http.Head(url)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
+	} else if resp.StatusCode != 200 {
+		log.Fatal ("Received a non-200 status code: ", resp.StatusCode)
 	}
 
 	// Perform the passes, keeping track of how long each takes
 	for i := 0; i < numPasses; i++ {
 		start := time.Now()
-		_, _ = http.Head(url)
+		_, err := client.Do(req)
 		elapsed := time.Since(start)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		fmt.Printf("Pass %d took %s\n", i, elapsed)
-
 		totalTime += elapsed
+			
 	}
 
 	average = totalTime / time.Duration(numPasses)
