@@ -7,13 +7,15 @@ import (
 	"strconv"
 	"time"
 	"log"
+//	"flag"
 )
 
-func main() {
-	totalTime := time.Duration(0)
-	numPasses := 10
-	var url string 
+var totalTime time.Duration = 0
+var average time.Duration
+var numPasses int = 10
+var url string
 
+func main() {
 	// Expects the URL on the commandline
 	numArgs := len(os.Args)
 	if numArgs >= 2 {
@@ -47,7 +49,7 @@ func main() {
 		totalTime += elapsed
 	}
 
-	average := totalTime / time.Duration(numPasses)
-	fmt.Printf("Total time for %d passes = %s\n", numPasses, totalTime)
-	fmt.Printf("Average time for each pass = %s\n", average)
+	average = totalTime / time.Duration(numPasses)
+	fmt.Printf("Total time for %d passes = %v\n", numPasses, totalTime)
+	fmt.Printf("Average time for each pass = %v\n", average)
 }
