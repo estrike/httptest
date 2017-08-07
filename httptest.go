@@ -14,13 +14,16 @@ var url string
 var hostname string
 var numPasses int
 var ignoreStatus bool
-var followRedirect bool
+var userAgent string
 
 func init() {
 	flag.StringVar(&hostname, "n", "", "Hostname for Host header")
-	flag.IntVar(&numPasses, "p", 10, "Number of connections")
+	flag.IntVar(&numPasses, "i", 10, "Number of iterations")
 	flag.BoolVar(&ignoreStatus, "s", false, "Ignore returned HTTP status code")
 	flag.StringVar(&url, "u", "", "URL, including protocol (HTTP/HTTPS), REQUIRED")
+	flag.StringVar(&userAgent, "a",
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+		"User Agent string")
 }
 
 func main() {
@@ -41,6 +44,7 @@ func main() {
 		},
 	}
 	req, _ := http.NewRequest("HEAD", url, nil)
+	req.Header.Set("User-Agent", userAgent)
 
 	// Set http.Client values based on flags
 	if hostname != "" {
