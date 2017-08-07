@@ -17,11 +17,10 @@ var ignoreStatus bool
 var followRedirect bool
 
 func init() {
-	flag.BoolVar(&followRedirect, "fr", false, "Follow redirects")
-	flag.StringVar(&hostname, "h", "", "Hostname for Host header")
-	flag.IntVar(&numPasses, "n", 10, "Number of connections")
+	flag.StringVar(&hostname, "n", "", "Hostname for Host header")
+	flag.IntVar(&numPasses, "p", 10, "Number of connections")
 	flag.BoolVar(&ignoreStatus, "s", false, "Ignore returned HTTP status code")
-	flag.StringVar(&url, "u", "", "URL, including protocol (HTTP/HTTPS), mandatory")
+	flag.StringVar(&url, "u", "", "URL, including protocol (HTTP/HTTPS), REQUIRED")
 }
 
 func main() {
@@ -44,9 +43,6 @@ func main() {
 	req, _ := http.NewRequest("HEAD", url, nil)
 
 	// Set http.Client values based on flags
-	if followRedirect {
-		client.CheckRedirect = nil
-	}
 	if hostname != "" {
 		req.Host = hostname
 	}
