@@ -34,7 +34,11 @@ func main() {
 	}
 
 	// Prepare the HTTP client with URL and HEADERS
-	client := &http.Client{}
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 	req, _ := http.NewRequest("HEAD", url, nil)
 
 	if hostname != "" {
