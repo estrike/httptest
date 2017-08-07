@@ -11,11 +11,13 @@ import (
 
 // Variables with command line flags
 var url string
+var hostname string
 var numPasses int
 var ignoreStatus bool
-var hostname string
+var followRedirect bool
 
 func init() {
+	flag.BoolVar(&followRedirect, "fr", false, "Follow redirects")
 	flag.StringVar(&hostname, "h", "", "Hostname for Host header")
 	flag.IntVar(&numPasses, "n", 10, "Number of connections")
 	flag.BoolVar(&ignoreStatus, "s", false, "Ignore returned HTTP status code")
@@ -41,6 +43,10 @@ func main() {
 	}
 	req, _ := http.NewRequest("HEAD", url, nil)
 
+	// Set http.Client values based on flags
+	if followRedirect {
+		client.CheckRedirect = nil
+	}
 	if hostname != "" {
 		req.Host = hostname
 	}
